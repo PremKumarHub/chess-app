@@ -1,35 +1,37 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from 'react';
+import { Chessboard } from 'react-chessboard';
+import './App.css';  // Import your custom styles
+import './styles.css';  // Make sure this file exists and is correctly imported
+import { Chess } from 'chess.js'; // for game logic
 
-function App() {
-  const [count, setCount] = useState(0)
+
+const App = () => {
+  const [game, setGame] = useState(new Chess()); // Initialize the chess game logic
+
+  // Function to handle moves
+  const handleMove = (sourceSquare, targetSquare) => {
+    const gameCopy = { ...game }; // Copy the current game state to avoid mutating directly
+    const move = gameCopy.move({ from: sourceSquare, to: targetSquare });
+
+    if (move === null) {
+      console.log('Invalid move');
+      return;
+    }
+    setGame(gameCopy);
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div>
+      <h1>Chess Game</h1>
+      <Chessboard
+        id="chessboard"
+        width={400}  // Set the size of the board
+        position={game.fen()} // Convert game state to FEN (Forsyth-Edwards Notation) format
+        onDrop={(sourceSquare, targetSquare) => handleMove(sourceSquare, targetSquare)}
+      />
+      {/* Add additional UI elements here, such as a reset button, or display game status */}
+    </div>
+  );
+};
 
-export default App
+export default App;
